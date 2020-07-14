@@ -71,7 +71,7 @@ function createFeatures(earthquakeData, platesData) {
 
     // create a GeoJSON layer containing the features array on the platesData object
     var tectonicLayer = L.geoJson(platesData, {
-        color: "yellow",
+        color: "orange",
         weight: 2,
         style: function (feature) {
             var latlngs = (feature.geometry.coordinates);
