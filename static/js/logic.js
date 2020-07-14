@@ -23,8 +23,8 @@ function colorMag(mag) {
     else if (mag < 5) {
         return "#fc8d59"
     }
-    else if (mag > 5) {
-        return "#d53e4f"
+    else {
+        return "#800000"
     }
 }
 
@@ -51,7 +51,8 @@ function createFeatures(earthquakeData) {
                 {
                     radius: markerSize(feature.properties.mag),
                     fillColor: colorMag(feature.properties.mag),
-                    fillOpacity: 1,
+                    color: "#000",
+                    fillOpacity: 0.80,
                     stroke: false,
                 })
         }
