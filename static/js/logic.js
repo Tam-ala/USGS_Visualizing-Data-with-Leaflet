@@ -1,5 +1,7 @@
-// get the query url to get data
+// get the query urls to get earthquake & tectonic plate data
 var queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
+var tectonicUrl = "https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json";
+
 
 // create function for marker size to make it visable on map
 function markerSize(mag) {
@@ -30,12 +32,20 @@ function colorMag(mag) {
 
 // perform a GET request to the query URL
 d3.json(queryUrl, function (data) {
-    // send the data.features object to the createFeatures function after getting a response
-    createFeatures(data.features);
+    // send the data.features object to the tectonicPlates function after getting a response
+    tectonicPlates(data.features);
 });
 
+// make funciton to make a GET request to tectonic plates url
+function tectonicPlates(plates) {
+    d3.json(tectonicUrl, function (data) {
+        // send the data.features and plates objects to the createFeatures function after getting a response
+        createFeatures(plates, data.features);
+    });
+};
+
 // define createFeatures function
-function createFeatures(earthquakeData) {
+function createFeatures(earthquakeData, platesData) {
     // create a GeoJSON layer containing the features array on the earthquakeData object  
     var earthquakes = L.geoJSON(earthquakeData, {
         // run the onEachFeature function once for each piece of data in the array
@@ -45,7 +55,7 @@ function createFeatures(earthquakeData) {
                 + new Date(features.properties.time) + "</p><hr>"
                 + "<h3> Magnitude: " + features.properties.mag + "</h3>")
         },
-        // return a cirlce marker
+        // return a cirlce marker based on marker size & magnitude color
         pointToLayer: function (feature, latlng) {
             return new L.circle(latlng,
                 {
@@ -59,12 +69,23 @@ function createFeatures(earthquakeData) {
 
     });
 
+    // create a GeoJSON layer containing the features array on the platesData object
+    var tectonicLayer = L.geoJson(platesData, {
+        color: "yellow",
+        weight: 2,
+        style: function (feature) {
+            var latlngs = (feature.geometry.coordinates);
+            return L.polyline(latlngs);
+        }
+
+    });
+
     // call function to display the map
-    createMap(earthquakes);
+    createMap(earthquakes, tectonicLayer);
 }
 
 // define createMap function
-function createMap(earthquakes) {
+function createMap(earthquakes, tectonicLayer) {
 
     // define streetmap, darkmap, and satellite layers
     var streetmap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
@@ -100,12 +121,13 @@ function createMap(earthquakes) {
 
     // create overlay object to hold our overlay layer
     var overlayMaps = {
-        Earthquakes: earthquakes
+        Earthquakes: earthquakes,
+        TectonicPlates: tectonicLayer
     };
 
     // create map, giving it the streetmap and earthquakes layers to display on load
     var myMap = L.map("map", {
-        center: [37.09, -95.71], zoom: 5, layers: [streetmap, earthquakes]
+        center: [37.09, -95.71], zoom: 5, layers: [streetmap, satelliteMap, darkmap, earthquakes, tectonicLayer]
     });
 
     // create a layer control that includes baseMaps and overlayMaps
