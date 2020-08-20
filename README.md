@@ -11,12 +11,11 @@ The USGS is interested in building a new set of tools that will allow them visua
 ## The Task
 
 ### Data Sets
-For Longitude & Latitude:
 
+For Longitude & Latitude:<br>
 This was retrieved from the [USGS GeoJSON Feed](http://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php) page. From there, I picked the 'All Earthquakes from the Past 7 Days' JSON.
 
-For Tectonic Plates:
-
+For Tectonic Plates:<br>
 The data set was retrieved [here](https://github.com/fraxen/tectonicplates).
 
 ### Step 1: Basic Visualization
